@@ -70,6 +70,20 @@ app.MapGet("/dashboards/names", () =>
 .Produces(StatusCodes.Status404NotFound)
 .ProducesProblem(StatusCodes.Status500InternalServerError);
 
+app.MapGet("/dashboards/{name}/thumbnail", async (string name) =>
+{
+    var path = "dashboards/" + name + ".rdash";
+    if (File.Exists(path))
+    {
+        var dashboard = new Dashboard(path);
+        var info = await dashboard.GetInfoAsync(Path.GetFileNameWithoutExtension(path));
+        return TypedResults.Ok(info);
+    }
+    else
+    {
+        return Results.NotFound();
+    }
+});
 
 app.Run();
 
